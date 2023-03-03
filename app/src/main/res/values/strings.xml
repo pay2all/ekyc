@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">EKYCSDK</string>
+
+
+    <string name="sjgcjsgfjhdgfh">Y2lwaGVyb3V0bGV0c2tleQ==</string>
+
+    <string name="capture_fingerprint">Capture Fingerprint</string>
+    <string name="proceed_now">Proceed Now</string>
+</resources>
