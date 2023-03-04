@@ -146,8 +146,9 @@ public class DocumentKYC extends AppCompatActivity implements LocationListener {
 
     String provider="";
 
-
     EditText ed_sending;
+
+    String capture_by="camera";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -325,7 +326,11 @@ public class DocumentKYC extends AppCompatActivity implements LocationListener {
             InputStream inputStream;
             if (requestCode==CAMERA_INTENT) {
 
-                Uri uri= Uri.fromFile(new File(imagepath));
+                if (!mCheckWriteStorage()) {
+                    mRequestWriteStorage();
+                }
+                else{
+                    Uri uri = Uri.fromFile(new File(imagepath));
                 try {
                     inputStream = getContentResolver().openInputStream(uri);
                 } catch (FileNotFoundException e) {
@@ -338,8 +343,9 @@ public class DocumentKYC extends AppCompatActivity implements LocationListener {
 //                File imgFile = new File(imagepath);
 //                if (imgFile.exists()) {
 //                    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                    mSetimageInImageView(image_type,zoom_decode_bitmap);
+                mSetimageInImageView(image_type, zoom_decode_bitmap);
 //                }
+            }
             }
             else if (requestCode==GALLERY_INTENT)
             {
@@ -408,7 +414,7 @@ public class DocumentKYC extends AppCompatActivity implements LocationListener {
                     alertDialog.dismiss();
                     String imageFileName = getResources().getString(R.string.app_name) + ".jpg";
                     File storageDir = Environment.getExternalStoragePublicDirectory(
-                            Environment.DIRECTORY_PICTURES);
+                            Environment.DIRECTORY_DCIM);
                     imagepath = storageDir.getAbsolutePath() + "/" + imageFileName;
                     File file = new File(imagepath);
                     Uri outputFileUri = Uri.fromFile(file);
@@ -1003,4 +1009,29 @@ public class DocumentKYC extends AppCompatActivity implements LocationListener {
         new DatNewSubmit().execute();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (grantResults[0]==PackageManager.PERMISSION_GRANTED) {
+            if (!imagepath.equals("")) {
+
+                InputStream inputStream;
+                Uri uri = Uri.fromFile(new File(imagepath));
+                try {
+                    inputStream = getContentResolver().openInputStream(uri);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    inputStream = null;
+                }
+
+                Bitmap zoom_decode_bitmap = BitmapFactory.decodeStream(inputStream);
+
+//                File imgFile = new File(imagepath);
+//                if (imgFile.exists()) {
+//                    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                mSetimageInImageView(image_type, zoom_decode_bitmap);
+            }
+        }
+    }
 }
